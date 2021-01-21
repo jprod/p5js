@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <title>Sketch</title>
+
+    <!-- Link to our stylesheet! -->
+    <link rel="stylesheet" href="style.css">
+
+
+    <script src="lib/gif.worker.js"></script>
+    <script src="lib/p5.min.js"></script>
+    <script src="lib/p5.dom.min.js"></script>
+    <script src="lib/p5.sound.min.js"></script>
+    <script src="lib/CCapture.all.min.js"></script>
+    <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.6/p5.js"></script> -->
+    <script>
+    var capturer = new CCapture( {
+       framerate: 50,
+       format: 'gif',
+       workersPath: './lib/',
+       verbose: true
+    });
+    </script>
+    <script src="sketch.js"></script>
+
+  </head>
+  <body>
+    <div id="sketch-holder">
+      <!-- Our sketch will go here! -->
+    </div>
+    <footer>
+        <button class="noselect expandButton" onclick="expandDetails()"><div class="innershade"><div class="expandSymbol"></div></div></div></button>
+    </footer>
+  </body>
+</html>
