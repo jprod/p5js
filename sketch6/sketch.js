@@ -1,105 +1,24 @@
+// let noiseScale=255;
+// let cellSize = 100;
+let fc = 0
+var bar = false
+var started = false
+var p0 = '#eb4034';
+var p1 = '#8634eb';
+var p2 = '#59785e';
+var p3 = '#55801d';
+var gui;
+
 function setup() {
   var canvas = createCanvas(windowWidth, windowHeight - 10);
   // var canvas = createCanvas(500, 500);
   canvas.parent('sketch-holder');
   background(200, 210, 220);
   frameRate(50);
+  gui = createGui('Colors');
+  gui.addGlobals("p0","p1","p2","p3");
+  noLoop();
 }
-
-class Quadra {
-  constructor(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
-    this.x1 = x1;
-    this.y1 = y1;
-    this.z1 = z1;
-    this.x2 = x2;
-    this.y2 = y2;
-    this.z2 = z2;
-    this.x3 = x3;
-    this.y3 = y3;
-    this.z3 = z3;
-    this.x4 = x4;
-    this.y4 = y4;
-    this.z4 = z4;
-  }
-
-  // Project and truncate z dim
-  project() {
-    quad(this.x1, this.y1, this.x2, this.y2, this.x3, this.y3, this.x4, this.y4);
-  }
-
-  tran(x, y, z) {
-    this.x1 = this.x1 + x;
-    this.y1 = this.y1 + y;
-    this.z1 = this.z1 + z;
-    this.x2 = this.x2 + x;
-    this.y2 = this.y2 + y;
-    this.z2 = this.z2 + z;
-    this.x3 = this.x3 + x;
-    this.y3 = this.y3 + y;
-    this.z3 = this.z3 + z;
-    this.x4 = this.x4 + x;
-    this.y4 = this.y4 + y;
-    this.z4 = this.z4 + z;
-    return this;
-  }
-
-  rot(x, y, z, a, b, g) {
-    this.tran(x*-1, y*-1, z*-1);
-    let _x1=this.rotx(this.x1,this.y1,this.z1,a,b,g);
-    let _y1=this.roty(this.x1,this.y1,this.z1,a,b,g);
-    let _z1=this.rotz(this.x1,this.y1,this.z1,a,b,g);
-    let _x2=this.rotx(this.x2,this.y2,this.z2,a,b,g);
-    let _y2=this.roty(this.x2,this.y2,this.z2,a,b,g);
-    let _z2=this.rotz(this.x2,this.y2,this.z2,a,b,g);
-    let _x3=this.rotx(this.x3,this.y3,this.z3,a,b,g);
-    let _y3=this.roty(this.x3,this.y3,this.z3,a,b,g);
-    let _z3=this.rotz(this.x3,this.y3,this.z3,a,b,g);
-    let _x4=this.rotx(this.x4,this.y4,this.z4,a,b,g);
-    let _y4=this.roty(this.x4,this.y4,this.z4,a,b,g);
-    let _z4=this.rotz(this.x4,this.y4,this.z4,a,b,g);
-    this.x1=_x1;
-    this.y1=_y1;
-    this.z1=_z1;
-    this.x2=_x2;
-    this.y2=_y2;
-    this.z2=_z2;
-    this.x3=_x3;
-    this.y3=_y3;
-    this.z3=_z3;
-    this.x4=_x4;
-    this.y4=_y4;
-    this.z4=_z4;
-    this.tran(x, y, z);
-    return this;
-  }
-
-  roto(o) {
-    this.rot(o.x,o.y,o.z,o.a,o.b,o.g);
-    return this;
-  }
-
-  rotx(x,y,z,a,b,g) {
-    return cos(a)*cos(b)*x+(cos(a)*sin(b)*sin(g)-sin(a)*cos(g))*y+(cos(a)*sin(b)*cos(g)+sin(a)*sin(g))*z;
-  }
-
-  roty(x,y,z,a,b,g) {
-    return sin(a)*cos(b)*x+(sin(a)*sin(b)*sin(g)+cos(a)*cos(g))*y+(sin(a)*sin(b)*cos(g)-cos(a)*sin(g))*z;
-  }
-
-  rotz(x,y,z,a,b,g) {
-    return -1*sin(b)*x+cos(b)*sin(g)*y+cos(b)*cos(g)*z;
-  }
-
-  avgz() {
-    return (this.z1+this.z2+this.z3+this.z4)/4
-  }
-}
-
-// let noiseScale=255;
-// let cellSize = 100;
-let fc = 0
-var bar = false
-var started = false
 
 function draw() {
   if (bar) {
@@ -112,36 +31,83 @@ function draw() {
     if (fc >= endcount) {
     console.log("recording"); capturer.stop(); capturer.save(); bar = false};
   }
-  let R2 = sqrt(2);
   let ww = windowWidth;
-  let mw = (ww/2);
   let wh = windowHeight;
-  let mh = (wh/2);
-  let rot0 = {x:mw,y:mh,z:0,a:0,b:PI/4,g:0}
-  let rot1 = {x:mw,y:mh,z:0,a:0,b:0,g:(fc/100)*PI}
-  let s1 = {obj: new Quadra(mw+380+sin(fc/10)*0, mh+310, 200, mw-380, mh+310, 200, mw-380, mh-310, 200, mw+380, mh-310, 200).roto(rot0).roto(rot1), color:color(227, 54, 77)}
-  let slist = [s1]
-  background(200, 201, 227);
-  noStroke();
-  slist.sort((a, b) => a.obj.avgz() - b.obj.avgz());
-  for (let i=0; i < 1; i++) {
-    fill(slist[i].color);
-    slist[i].obj.project();
+  let up0 = [unhex(p0[1]+p0[2]), unhex(p0[3]+p0[4]), unhex(p0[5]+p0[6])]
+  let up1 = [unhex(p1[1]+p1[2]), unhex(p1[3]+p1[4]), unhex(p1[5]+p1[6])]
+  let up2 = [unhex(p2[1]+p2[2]), unhex(p2[3]+p2[4]), unhex(p2[5]+p2[6])]
+  let up3 = [unhex(p3[1]+p3[2]), unhex(p3[3]+p3[4]), unhex(p3[5]+p3[6])]
+  // for (let i = 0; i < ww; i += 1) {
+  //   let t = i / ww;
+  //   stroke(Bez(t, up0, up1, up2, up3));
+  //   line(i, 0, i, wh);
+  // }
+  loadPixels();
+  let d = pixelDensity();
+
+  function getp(x, y) {
+    index = 4 * ((y * d) * ww * d + (x * d));
+    return [pixels[index], pixels[index+1], pixels[index+2], pixels[index+3]];
   }
+
+  function setp(x, y, c_set) {
+    index = 4 * ((y * d) * ww * d + (x * d));
+    pixels[index] = c_set[0];
+    pixels[index+1] = c_set[1];
+    pixels[index+2] = c_set[2];
+    pixels[index+3] = 255;
+  }
+
+  let buff = [...Array(wh)].map(x=>Array(ww));
+  for (let y = 0; y < wh; y++) {
+    for (let x = 0; x < ww; x++) {
+      let t = x / ww;
+      buff[y][x] = Bez(t, up0, up1, up2, up3)
+    }
+  }
+
+  for (let y = 0; y < wh; y++) {
+    for (let x = 0; x < ww; x++) {
+      let op = buff[y][x];
+      let np = [round(op[0]),round(op[1]),round(op[2])];
+      buff[y][x] = np;
+      let qerr = [op[0]-np[0],op[1]-np[1],op[2]-np[2]];
+      if (x+1 < ww) {
+        buff[y][x+1] = madd(buff[y][x+1], mscale(qerr, 7/16));
+      }
+      if (y+1 < wh) {
+        if (x-1 >= 0) {
+          buff[y+1][x-1] = madd(buff[y+1][x-1], mscale(qerr, 3/16));
+        }
+        buff[y+1][x] = madd(buff[y+1][x], mscale(qerr, 5/16));
+        if (x+1 < ww) {
+          buff[y+1][x+1] = madd(buff[y+1][x+1], mscale(qerr, 1/16));
+        }
+      }
+    } 
+  }
+  for (let y = 0; y < wh; y++) {
+    for (let x = 0; x < ww; x++) {
+      setp(x, y, buff[y][x]);
+    }
+  }
+  updatePixels();
   fc += 1;
-  bbout(fc);
-  // text(fc, 50, 50)
+}
+
+function madd(a, b) {
+  return [a[0]+b[0],a[1]+b[1],a[2]+b[2]]
+}
+
+function mscale(m, s) {
+  return [s*m[0],s*m[1],s*m[2]]
+}
+
+function Bez(t, p0, p1, p2, p3) {
+  c = (1-t)
+  return [c*c*c*p0[0]+3*c*c*t*p1[0]+3*c*t*t*p2[0]+t*t*t*p3[0], c*c*c*p0[1]+3*c*c*t*p1[1]+3*c*t*t*p2[1]+t*t*t*p3[1], c*c*c*p0[2]+3*c*c*t*p1[2]+3*c*t*t*p2[2]+t*t*t*p3[2]]
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight - 10);
-  background(200, 210, 220);
-}
-
-function expandDetails() {
-  alert("details expanded");
-}
-
-function mousePressed() {
-  frameCount = frameCount - 1
 }
