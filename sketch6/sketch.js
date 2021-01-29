@@ -91,11 +91,6 @@ function draw() {
     loadPixels();
     let d = pixelDensity();
 
-    function getp(x, y) {
-      index = 4 * ((y * d) * ww * d + (x * d));
-      return [pixels[index], pixels[index+1], pixels[index+2], pixels[index+3]];
-    }
-
     function setp(x, y, c_set) {
       index = 4 * ((y * d) * ww * d + (x * d));
       pixels[index] = c_set[0];
@@ -121,7 +116,7 @@ function draw() {
         } else {
           np = [round(op[0]),round(op[1]),round(op[2])];
         }
-        buff[y][x] = np;
+        setp(x, y, np);
         let qerr = [op[0]-np[0],op[1]-np[1],op[2]-np[2]];
         if (x+1 < ww) {
           buff[y][x+1] = madd(buff[y][x+1], mscale(qerr, 7/16));
@@ -137,13 +132,8 @@ function draw() {
         }
       } 
     }
-    for (let y = 0; y < wh; y++) {
-      for (let x = 0; x < ww; x++) {
-        setp(x, y, buff[y][x]);
-      }
-    }
     updatePixels();
-    fc += 1;
+    // fc += 1;
   }
   p0before = p0;
   p1before = p1;
