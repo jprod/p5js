@@ -20,7 +20,7 @@ function drawsquig(xorig, yorig, end, dim=true) {
   noFill();
   beginShape();
   let x = xorig;
-  let y = yorig + 20;
+  let y = yorig;
   let ydif = random(30, 70);
   let adif = ydif * random(0.3, 0.5);
   let xdif = random(-5, 5);
@@ -45,22 +45,22 @@ function drawsquig(xorig, yorig, end, dim=true) {
   endShape();
 }
 
-function layer(cells, offset) {
-  for (let src = offset + windowWidth / cells; src < windowWidth; src += windowWidth / cells) {
-    drawsquig(src + random(-10,10),  random(20), windowHeight - 100);
+function layer(cells, xoffset, yoffset) {
+  for (let src = xoffset; src < windowWidth; src += windowWidth / cells) {
+    drawsquig(src + random(-10,10),  random(20), windowHeight);
   }  
-  for (let src = offset + windowHeight / cells; src < windowHeight; src += windowHeight / cells) {
-    drawsquig(src + random(-10,10),  random(20), windowWidth - 100, false);
+  for (let src = yoffset; src < windowHeight; src += windowHeight / cells) {
+    drawsquig(src + random(-10,10),  random(20), windowWidth, false);
   }
 }
 
 function draw() {
-  background(240, 240, 240);
+  background(255, 255, 255);
   let cells = 30;
   for (let src = 8; src > 0; src--) {
-    stroke(200+ src*5);
+    stroke(200 + src*5, 218 + src*4, 200 + src*5);
     strokeWeight(src/2);
-    layer(cells + src, random(50));
+    layer(cells + src, random(50), random(50));
   }
 }
 
@@ -68,4 +68,3 @@ function draw() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight - 10);
 }
-
